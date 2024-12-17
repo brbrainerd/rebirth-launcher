@@ -1,0 +1,79 @@
+name: Release Build
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build:
+    runs-on: windows-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        lfs: true
+    
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.9'
+        
+    - name: Install 7-Zip
+      run: |
+        winget install 7zip.7zip
+        
+    - name: Process Mod Archive
+      run: |
+        # Get latest mod file
+        $modFile = Get-ChildItem -Filter "REBIRTH-EXPERIMENTAL-*.zip" | 
+          Where-Object { $_.Name -notlike "*.split.*" } |
+          Sort-Object LastWriteTime -Descending | 
+          Select-Object -First 1
+        
+        # Split the file
+        7z a -v1900m "$($modFile.BaseName).zip.split" "$($modFile.FullName)"
+        
+        # Calculate checksum and create version info
+        $hash = Get-FileHash $modFile.FullName -Algorithm SHA256
+        $size = (Get-Item $modFile.FullName).Length
+        
+        # Get split files
+        $splitFiles = Get-ChildItem "$($modFile.BaseName).zip.split.*" | 
+          Select-Object -ExpandProperty Name
+        
+        # Create version.json dynamically
+        $version = @{
+          version = "${{ github.ref_name }}"
+          mod_file = $modFile.Name
+          chunks = $splitFiles
+          checksum = $hash.Hash.ToLower()
+          size = $size
+        } | ConvertTo-Json
+        
+        # Create version file in src directory
+        Set-Content -Path "src/version.json" -Value $version
+        
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -e ".[dev]"
+        
+    - name: Build executable
+      run: |
+        pyinstaller --name rebirth-launcher `
+          --onefile `
+          --windowed `
+          --add-data "src/config.py;." `
+          --add-data "src/version.json;." `
+          src/config.py
+          
+    - name: Create Release
+      uses: softprops/action-gh-release@v1
+      with:
+        files: |
+          dist/rebirth-launcher.exe
+          REBIRTH-EXPERIMENTAL-*.zip.split.*
+          src/version.json
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
