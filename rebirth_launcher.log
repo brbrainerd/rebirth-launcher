@@ -1,0 +1,20 @@
+2024-12-16 21:53:42,004 - LauncherConfig - INFO - Saved configuration to C:\Users\Owner\RebirthLauncher\src\rebirth_launcher\launcher_config.json
+2024-12-16 21:53:42,004 - LauncherConfig - INFO - Created new configuration file
+2024-12-16 21:53:42,006 - rebirth_launcher.main - ERROR - Fatal error
+Traceback (most recent call last):
+  File "C:\Users\Owner\RebirthLauncher\src\rebirth_launcher\main.py", line 69, in launch
+    launcher.run(
+TypeError: RebirthLauncher.run() got an unexpected keyword argument 'skip_update'
+2024-12-16 21:55:58,540 - LauncherConfig - INFO - Loaded existing configuration
+2024-12-16 21:55:58,541 - rebirth_launcher.launcher - INFO - Starting Rebirth Launcher
+2024-12-16 21:55:58,542 - rebirth_launcher.launcher - ERROR - Launcher execution failed
+Traceback (most recent call last):
+  File "C:\Users\Owner\RebirthLauncher\src\rebirth_launcher\launcher.py", line 48, in run
+    raise LauncherError(
+rebirth_launcher.exceptions.LauncherError: 7 Days to Die not found in Steam library
+2024-12-16 21:55:58,543 - rebirth_launcher.main - ERROR - 7 Days to Die not found in Steam library
+2024-12-16 21:57:34,464 - LauncherConfig - INFO - Loaded existing configuration
+2024-12-16 21:57:34,465 - rebirth_launcher.launcher - INFO - Starting Rebirth Launcher
+2024-12-16 21:57:34,465 - rebirth_launcher.steam_integration - INFO - Game executable found at: C:\Program Files (x86)\Steam\steamapps\common\7 Days To Die\7DaysToDie.exe
+2024-12-16 21:57:34,465 - rebirth_launcher.launcher - INFO - Launching game with command: C:\Program Files (x86)\Steam\steamapps\common\7 Days To Die\7DaysToDie.exe -logfile C:\Program Files (x86)\Steam\steamapps\common\7 Days To Die\output_log.txt -noeac
+2024-12-16 21:57:34,469 - rebirth_launcher.launcher - INFO - Game launched successfully
