@@ -30,3 +30,6 @@ build/
 
 # Config
 launcher_config.json
+
+# Logs
+*.log
