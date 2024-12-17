@@ -3,7 +3,7 @@ from pathlib import Path
 import json
 import logging
 from dataclasses import dataclass
-from typing import Callable
+from typing import Callable, Optional, Union
 
 import requests
 
@@ -18,9 +18,9 @@ class ModInfo:
     """Information about a mod."""
     name: str
     version: str
-    description: str | None = None
-    author: str | None = None
-    dependencies: list[str] | None = None
+    description: Optional[str] = None
+    author: Optional[str] = None
+    dependencies: Optional[list[str]] = None
 
 class ModManager:
     """Manages mod installation and updates."""

@@ -2,13 +2,13 @@
 from dataclasses import dataclass
 from pathlib import Path
 import logging
-from typing import Callable
+from typing import Callable, Optional
 
 import requests
 
-from rebirth_launcher.config import get_config
-from rebirth_launcher.constants import GITHUB_API_BASE
-from rebirth_launcher.exceptions import LauncherError
+from .config import get_config
+from .constants import GITHUB_API_BASE
+from .exceptions import ModUpdateError
 
 logger = logging.getLogger(__name__)
 
@@ -16,9 +16,10 @@ logger = logging.getLogger(__name__)
 class ReleaseInfo:
     """Information about a mod release."""
     version: str
+    tag_name: str
     chunks: list[str]
     checksum: str
-    changelog: str | None = None
+    changelog: Optional[str] = None
 
 class UpdateChecker:
     """Checks for and downloads mod updates."""
@@ -75,7 +76,7 @@ class UpdateChecker:
                         progress_callback(downloaded / total)
                         
         except Exception as e:
-            raise LauncherError(
+            raise ModUpdateError(
                 "Failed to download file",
                 f"URL: {url}, Error: {str(e)}"
             )

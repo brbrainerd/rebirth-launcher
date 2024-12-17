@@ -1,17 +1,17 @@
 """Configuration management for the Rebirth Launcher."""
-from dataclasses import dataclass, field
-from pathlib import Path
 import json
 import logging
 import sys
-from typing import Any, Optional, ClassVar
+from dataclasses import dataclass, field
+from pathlib import Path
+from typing import ClassVar, Optional
 
 from rebirth_launcher.constants import (
-    DEFAULT_STEAM_PATH,
+    CURRENT_GAME_VERSION,
+    DEFAULT_CONFIG_FILENAME,
     DEFAULT_GAME_PATH,
     DEFAULT_MODS_PATH,
-    DEFAULT_CONFIG_FILENAME,
-    CURRENT_GAME_VERSION,
+    DEFAULT_STEAM_PATH,
     MOD_HOSTING_BASE_URL,
 )
 from rebirth_launcher.exceptions import ConfigError, GamePathError

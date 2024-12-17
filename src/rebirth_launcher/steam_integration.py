@@ -4,8 +4,8 @@ from pathlib import Path
 import winreg
 
 from rebirth_launcher.config import get_config
-from rebirth_launcher.exceptions import SteamError
 from rebirth_launcher.constants import STEAM_APP_ID
+from rebirth_launcher.exceptions import SteamError
 
 logger = logging.getLogger(__name__)
 

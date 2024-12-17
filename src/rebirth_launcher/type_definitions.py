@@ -1,6 +1,5 @@
 """Type stubs for external libraries."""
-from collections.abc import Protocol
-from typing import Any
+from typing import Any, Protocol
 
 # Rich types
 class RichConsole(Protocol):

@@ -32,7 +32,7 @@ GITHUB_REPO: Final[str] = "brbrainerd/rebirth-launcher"
 GITHUB_API_BASE: Final[str] = f"https://api.github.com/repos/{GITHUB_REPO}"
 
 # Mod hosting
-MOD_HOSTING_BASE_URL: Final[str] = "https://github.com/brbrainerd/rebirth-mods/releases/download"
+MOD_HOSTING_BASE_URL: Final[str] = "https://api.github.com/repos/brbrainerd/rebirth-mods"
 
 # Launcher settings
 DEFAULT_CONFIG_FILENAME: Final[str] = "launcher_config.json"

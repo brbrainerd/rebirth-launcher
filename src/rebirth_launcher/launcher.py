@@ -1,20 +1,22 @@
 """Main launcher implementation for Rebirth mod pack."""
+import logging
+from collections.abc import Sequence
 from pathlib import Path
 import subprocess
-import logging
-from typing import Optional, Callable, Sequence
+from typing import Callable, Optional
 
-from rebirth_launcher.config import get_config, LauncherConfig
+# Local imports
+from rebirth_launcher.archive import ArchiveHandler
+from rebirth_launcher.config import LauncherConfig, get_config
 from rebirth_launcher.constants import ALLOWED_MODS
 from rebirth_launcher.exceptions import (
-    LauncherError,
     GamePathError,
-    ModInstallError,
-    ModUpdateError
+    LauncherError,
+    ModError,
 )
-from rebirth_launcher.update_checker import UpdateChecker, ReleaseInfo
 from rebirth_launcher.steam_integration import SteamIntegration
-from rebirth_launcher.archive import ArchiveHandler
+from rebirth_launcher.type_definitions import Progress
+from rebirth_launcher.update_checker import ReleaseInfo, UpdateChecker
 from rebirth_launcher.utils import clean_directory, ensure_directory
 
 logger = logging.getLogger(__name__)
@@ -23,12 +25,21 @@ class RebirthLauncher:
     """Main launcher class for Rebirth mod pack."""
     
     def __init__(self) -> None:
-        """Initialize launcher with configuration."""
-        self.config: LauncherConfig = get_config()
-        self.steam: SteamIntegration = SteamIntegration()
-        self.update_checker: UpdateChecker = UpdateChecker()
-        self.archive_handler: ArchiveHandler = ArchiveHandler()
-        
+        """Initialize launcher."""
+        self.config = get_config()
+        self.update_checker = UpdateChecker()
+        self.steam = SteamIntegration()
+        self.archive_handler = ArchiveHandler()
+
+    def handle_error(self, error: Exception, message: str) -> None:
+        """Handle errors with logging."""
+        logger.error(message)
+        if isinstance(error, LauncherError):
+            if error.details:
+                logger.debug(error.details)
+        else:
+            logger.exception("Unexpected error")
+
     def run(
         self,
         skip_update: bool = False,
@@ -76,14 +87,14 @@ class RebirthLauncher:
             
             # Clean mod directories
             if not self._clean_mod_directories():
-                raise ModUpdateError(
+                raise ModError(
                     "Failed to clean mod directories",
                     "Could not remove existing mods"
                 )
             
             # Download and install new version
             if not self._install_mods(release_info, progress_callback):
-                raise ModUpdateError(
+                raise ModError(
                     "Failed to install new version",
                     "Error downloading or extracting mod files"
                 )
@@ -190,4 +201,38 @@ class RebirthLauncher:
             
         except Exception as e:
             logger.exception("Failed to install mods")
+            return False
+    
+    def check_for_updates(self) -> Optional[ReleaseInfo]:
+        """Check for mod updates."""
+        try:
+            release_info = self.update_checker.check_updates()
+            if release_info and release_info.version != self.config.version:
+                logger.info(
+                    "Update available: %s -> %s",
+                    self.config.version,
+                    release_info.tag_name
+                )
+                return release_info
+            return None
+            
+        except Exception as e:
+            self.handle_error(e, "Failed to check for updates")
+            return None
+
+    def install_update(
+        self,
+        release_info: ReleaseInfo,
+        progress_callback: Optional[Callable[[float], None]] = None
+    ) -> bool:
+        """Install mod update."""
+        try:
+            logger.info(
+                "Installing update %s",
+                release_info.tag_name
+            )
+            # ... rest of the method ...
+            
+        except Exception as e:
+            self.handle_error(e, "Failed to install update")
             return False 

@@ -4,8 +4,8 @@ import subprocess
 import logging
 from typing import Optional
 
-from .exceptions import ModError
-from .utils import ensure_directory
+from rebirth_launcher.exceptions import ModError
+from rebirth_launcher.utils import ensure_directory
 
 logger = logging.getLogger(__name__)
 
